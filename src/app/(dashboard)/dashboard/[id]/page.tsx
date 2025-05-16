@@ -10,7 +10,7 @@ export default function DashboardView() {
   const { id } = useParams<{ id: string }>();
   const { data: guild, isLoading, isError, isPending, error } = useQuery({
     queryKey: ["getGuilds", "dashboard"],
-    queryFn: () => betterFetch(`${env.NEXT_PUBLIC_API_URL}/dash/guilds/${id}`),
+    queryFn: () => betterFetch(`${env.NEXT_PUBLIC_API_URL}/dash/guild/${id}`),
   });
 
   if(isLoading) return <Loader/>

@@ -41,13 +41,14 @@ export const dash = new Elysia({
       );
     }
   })
+
   .get(`/guild/:id`, ({ params }) => {
     const guild = app.guilds.cache.find((f) => f.id === params.id);
     if (!guild) {
       return new Response(
         JSON.stringify({
           ok: false,
-          data: null,
+          data: null
         }),
         {
           status: 200,
@@ -58,29 +59,7 @@ export const dash = new Elysia({
     return new Response(
       JSON.stringify({
         ok: true,
-        data: guild,
-      }),
-      {
-        status: 200,
-      }
-    );
-  })
-  .get(`/guild/:id`, ({ params }) => {
-    const guild = app.guilds.cache.find((f) => f.id === params.id);
-    if (!guild) {
-      return new Response(
-        JSON.stringify({
-          ok: false,
-        }),
-        {
-          status: 200,
-        }
-      );
-    }
-
-    return new Response(
-      JSON.stringify({
-        ok: true,
+        data: guild
       }),
       {
         status: 200,
