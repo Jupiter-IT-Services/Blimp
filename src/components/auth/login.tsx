@@ -7,16 +7,20 @@ import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import { env } from "@/env";
+import Loader from "../loader";
+import { useSpinDelay } from "spin-delay";
 
 export default function LoginComponent() {
+  const [loading, setLoading] = useState(false)
+  const { data, isPending, error } = authClient.useSession();
   useEffect(() => {
-    (async () => {
-      const data = await authClient.getSession();
-      if (data && data.data) {
-        return redirect("/dashboard");
-      }
-    })();
-  }, []);
+    if (data && data.user && data.session) {
+      return redirect("/dashboard");
+    }
+  }, [data]);
+
+  const showSpinner = useSpinDelay(isPending, { delay: 500, minDuration: 200 });
+  if(showSpinner) return <Loader/>
   return (
     <div className="flex items-center justify-center w-screen h-screen">
       <div className="flex max-w-[500px] items-center justify-center">

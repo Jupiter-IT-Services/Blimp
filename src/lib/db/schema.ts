@@ -8,6 +8,7 @@ import {
 
 export const guildConfig = pgTable("guild_config", {
   id: text("id").primaryKey(), // guild id
+  disabledCommands: text("disabled_command").array().notNull().default([])
 });
 
 export type GuildConfigSelect = typeof guildConfig.$inferSelect;

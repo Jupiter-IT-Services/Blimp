@@ -12,6 +12,8 @@ import type CoreBot from "./Core";
 export type Command = {
   run: CommandRunFn;
   adminOnly?: boolean;
+  usage: string[];
+  category?: string;
 } & ChatInputApplicationCommandData;
 
 export type CommandRunFn = (opts: CommandRunFnOpts) => void;

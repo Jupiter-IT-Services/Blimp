@@ -1,28 +1,33 @@
 import Image from "next/image";
-import { sha256 } from "js-sha256";
 import {
   Avatar as ShadAvatar,
   AvatarFallback,
   AvatarImage
 } from "@/components/ui/avatar"
+import { formatNameForAvatar } from "@/lib/utils";
 type AvatarProps = {
-  email: string;
+  name: string;
+  iconHash: string | null;
+  id: string;
   className?: string;
   size?: number;
 };
 
-export function Avatar({ email, size = 28, ...props }: AvatarProps) {
-  const emailHash = sha256(email.toLowerCase().trim());
-  const gravatarUrl = `https://gravatar.com/avatar/${emailHash}?s=${size}&d=mp`;
+export function Avatar({ name, id, iconHash, size = 50, ...props }: AvatarProps) {
 
   return (
-    <ShadAvatar>
-      <AvatarImage src={gravatarUrl}
-        alt={`${email}'s avatar`}
+    <ShadAvatar className="bg-default-accent" style={{
+      width: `${size}px`,
+      height: `${size}px`
+    }}>
+      {iconHash && <AvatarImage
+        src={`https://cdn.discordapp.com/icons/${id}/${iconHash as string}.${(iconHash as string).startsWith("a_") ? "gif" : "png"}?size=4096`}
+        alt={`${name} icon`}
         width={size}
         height={size}
-        className={`rounded-full ${props.className}`} />
-      <AvatarFallback>{email.charAt(0)}</AvatarFallback>
+
+      />}
+      <AvatarFallback>{formatNameForAvatar(name)}</AvatarFallback>
     </ShadAvatar>
 
   );

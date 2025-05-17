@@ -15,6 +15,8 @@ import { betterFetch } from "@better-fetch/fetch";
 import { env } from "@/env";
 import Loader from "../loader";
 import { toast } from "sonner";
+import { useSpinDelay } from "spin-delay";
+import ForceHome from "../auth/ForceHome";
 
 export type GuildViewProps = {
   guilds: Guild[];
@@ -40,7 +42,9 @@ export default function GuildView(props: GuildViewProps) {
       }),
   });
 
-  if (isLoading || !data) return <Loader />;
+  const showSpinner = useSpinDelay(isLoading, { delay: 500, minDuration: 200 });
+  if (showSpinner) return <Loader />;
+  if(!data) return <ForceHome/>
   const newGuilds = sortGuildsByAvailable(
     props.guilds,
     data?.data?.data as string[]

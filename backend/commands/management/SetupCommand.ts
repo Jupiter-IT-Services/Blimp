@@ -7,7 +7,8 @@ export default {
   adminOnly: true,
   defaultMemberPermissions: ["Administrator"],
   type: ApplicationCommandType.ChatInput,
+  usage: ["/setup"],
   run: ({ ctx, client, args }) => {
-    
+
   },
 } as Command;
