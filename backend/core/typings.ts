@@ -14,6 +14,7 @@ export type Command = {
   adminOnly?: boolean;
   usage: string[];
   category?: string;
+  devOnly?: boolean;
 } & ChatInputApplicationCommandData;
 
 export type CommandRunFn = (opts: CommandRunFnOpts) => void;

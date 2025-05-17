@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
 import { account, session, user, verification } from "@/lib/db/schema";
 import { bearer } from "better-auth/plugins";
-import { createClient } from "redis";
+// import { createClient } from "redis";
 import { env } from "@/env";
 import { nextCookies } from "better-auth/next-js";
 import { DiscordProfile } from "./types";
@@ -12,15 +12,15 @@ import { GuildDefault } from "./utils";
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 
-const redis = createClient({
-  url: env.REDIS_URL,
-});
+// const redis = createClient({
+//   url: env.REDIS_URL,
+// });
 
 const stripeClient = new Stripe(env.STRIPE_PRIVATE_KEY, {
   apiVersion: "2025-02-24.acacia",
 });
 
-await redis.connect();
+// await redis.connect();
 
 export const auth = betterAuth({
   user: {

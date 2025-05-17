@@ -7,17 +7,19 @@ import type {
 import type { Event, ExtendedInteraction } from "../core/typings";
 import { app } from "..";
 import { int } from "drizzle-orm/mysql-core";
+import { disabledCommand } from "../utils/misc";
+import config from "../config";
 
 export default {
   name: "interactionCreate",
-  run: (interaction: Interaction) => {
-    if (interaction.isCommand()) {
+  run: async (interaction: Interaction) => {
+    if (interaction.isCommand() && interaction.guild) {
       const cmdName = interaction.commandName
         ? interaction.commandName.toLowerCase()
         : null;
       if (!cmdName) {
         return interaction.reply({
-          content: `Unable to find command: \`/${cmdName}\``,
+          content: `${config.emojis.cross} Unable to find command: \`/${cmdName}\``,
           flags: ["Ephemeral"],
         });
       }
@@ -25,7 +27,7 @@ export default {
       const command = app.commands.get(cmdName);
       if (!command) {
         return interaction.reply({
-          content: `Unable to find command: \`/${cmdName}\``,
+          content: `${config.emojis.cross} Unable to find command: \`/${cmdName}\``,
           flags: ["Ephemeral"],
         });
       }
@@ -35,15 +37,26 @@ export default {
       ) as GuildMember;
 
       if (
+        await disabledCommand(command.name.toLowerCase(), interaction.guild.id)
+      ) {
+        return interaction.reply({
+          ephemeral: true,
+          content: `${config.emojis.cross} This command is disabled.`
+        });
+      }
+
+      if (
         command.adminOnly &&
         !interaction.member.permissions.has("Administrator")
       ) {
         return interaction.reply({
           ephemeral: true,
           content:
-            "You are missing the required permissions to use this command.",
+            `${config.emojis.admin} You are missing the required permissions to use this command.`,
         });
       }
+
+      
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,
         client: app,

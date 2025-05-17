@@ -46,7 +46,7 @@ export type GuildSidebarProps = {
 }
 
 export default function GuildSidebar(props: GuildSidebarProps) {
-    return <Card className="flex h-screen flex-col gap-2 py-[2rem] px-[0.75rem] min-w-[17rem] max-w-[17rem] ">
+    return <Card className="rounded-none flex h-screen flex-col gap-2 py-[2rem] px-[0.75rem] min-w-[17rem] max-w-[17rem] ">
 
 
         <Accordion type="multiple" defaultValue={[...Object.keys(TABS)]}>
