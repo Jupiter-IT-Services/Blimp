@@ -48,3 +48,5 @@ export async function disabledCommand(name: string, guildId: string) {
 
   return config.disabledCommands.includes(name.toLowerCase());
 }
+
+

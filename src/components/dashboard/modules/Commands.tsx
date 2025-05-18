@@ -20,9 +20,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { env } from "@/env";
-import { useGuildStore } from "@/lib/stores";
+import { useGuildStore, useWebsocket } from "@/lib/stores";
 import { betterFetch } from "@better-fetch/fetch";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import { Guild } from "discord.js";
 import { useEffect, useState } from "react";
 import { useSpinDelay } from "spin-delay";
@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { sortCommandsByStatus } from "@/lib/utils";
 import { ECommand } from "@/backend/api/dash";
 import { toast } from "sonner";
+import { WSData, WSType } from "@/backend/ws";
 
 export type CommandsFetch = {
   ok: boolean;
@@ -38,6 +39,7 @@ export type CommandsFetch = {
 
 export default function Commands() {
   const guild = useGuildStore((s) => s.guild) as Guild;
+
 
   const { data, isError, isLoading, error } = useQuery({
     queryKey: ["getCommands"],
@@ -84,7 +86,6 @@ export default function Commands() {
 
     const data = sortCommandsByStatus(updatedCommands);
 
-    console.log(data);
 
     betterFetch<CommandsFetch>(
       `${env.NEXT_PUBLIC_API_URL}/dash/update-commands/${guild.id}`,
@@ -188,13 +189,22 @@ export default function Commands() {
               Make sure to save your changes before quitting.
             </p>
           </div>
-          <Button
-            variant={"red"}
-            className="cursor-pointer"
-            onClick={() => saveChanges()}
-          >
-            Save Changes
-          </Button>
+          <div className="flex flex-row gap-2">
+            <Button
+              variant={"red"}
+              className="cursor-pointer"
+              onClick={() => saveChanges()}
+            >
+              Save Changes
+            </Button>
+            <Button
+              variant={"secondary"}
+              className="cursor-pointer"
+              onClick={() => resetChanges()}
+            >
+              Reset
+            </Button>
+          </div>
         </Card>
       </motion.div>
     </div>

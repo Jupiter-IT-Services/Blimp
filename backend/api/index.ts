@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import { dash } from "./dash";
 import { logger } from "@bogeychan/elysia-logger";
 import { cors } from "@elysiajs/cors";
+import { modules } from "./modules";
 
 export const api = new Elysia()
   .use(cors())
@@ -19,4 +20,5 @@ export const api = new Elysia()
     cookies: "with",
     milk: true,
   }))
-  .use(dash);
+  .use(dash)
+  .use(modules);

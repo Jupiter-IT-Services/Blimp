@@ -2,11 +2,11 @@ import Elysia from "elysia";
 import { app } from "../..";
 import { z, ZodError } from "zod";
 import { db } from "@/lib/db";
-import { guildConfig } from "@/lib/db/schema";
+import { guildConfig, reactionRole } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { err, info } from "@/backend/utils/logger";
 import { Command } from "@/backend/core/typings";
-import { updateDisabledCommands } from "@/backend/utils/misc";
+import { getGuildConfig, updateDisabledCommands } from "@/backend/utils/misc";
 
 export type ECommand = Omit<Command, "run"> & {
   disabled: true;
@@ -18,6 +18,30 @@ const guildsSchema = z.object({
 export const dash = new Elysia({
   prefix: "/dash",
 })
+  .get(`/guild/:id/channels`, ({ params }) => {
+    const guild = app.guilds.cache.find((f) => f.id === params.id);
+    if (!guild) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          data: null,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: guild.channels.cache.toJSON(),
+      }),
+      {
+        status: 200,
+      }
+    );
+  })
   .post(`/guilds/in`, ({ body }) => {
     try {
       const data = guildsSchema.parse(body);
@@ -51,7 +75,70 @@ export const dash = new Elysia({
       );
     }
   })
+  .get(`/guild/:id/role/:roleId`, ({ params }) => {
+    const { id, roleId } = params;
+    const guild = app.guilds.cache.find((f) => f.id === params.id);
+    if (!guild) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          data: null,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
 
+    const role = guild.roles.cache.find((f) => f.id === roleId);
+    if (!role) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          data: null,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: role,
+      }),
+      {
+        status: 200,
+      }
+    );
+  })
+  .get(`/guild/:id/roles`, ({ params }) => {
+    const guild = app.guilds.cache.find((f) => f.id === params.id);
+    if (!guild) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          data: null,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: guild.roles.cache
+          .toJSON()
+          .filter((f) => !f.managed && f.id !== guild.id),
+      }),
+      {
+        status: 200,
+      }
+    );
+  })
   .get(`/guild/:id`, ({ params }) => {
     const guild = app.guilds.cache.find((f) => f.id === params.id);
     if (!guild) {
@@ -220,4 +307,69 @@ export const dash = new Elysia({
         }
       );
     }
+  })
+  .get(`/reaction-roles/:id/enabled`, async ({ params }) => {
+    const guildConfig = await getGuildConfig(params.id);
+    if (!guildConfig)
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          message: "Guild config not found.",
+        }),
+        {
+          status: 200,
+        }
+      );
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: guildConfig.reactionRoles,
+      }),
+      {
+        status: 200,
+      }
+    );
+  })
+  .get(`/reaction-roles/:id`, async ({ params }) => {
+    const guildConfig = await getGuildConfig(params.id);
+    if (!guildConfig)
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          message: "Guild config not found.",
+        }),
+        {
+          status: 200,
+        }
+      );
+
+    if (!guildConfig.reactionRoles) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: [],
+          disabled: true,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+
+    const reactionRoles = await db
+      .select()
+      .from(reactionRole)
+      .where(eq(reactionRole.id, params.id));
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: reactionRole ? reactionRoles : [],
+        disabled: false,
+      }),
+      {
+        status: 200,
+      }
+    );
   });

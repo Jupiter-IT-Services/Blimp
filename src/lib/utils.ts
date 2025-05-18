@@ -49,20 +49,27 @@ export function sortGuildsByAvailable(
 }
 
 export function formatNameForAvatar(name: string) {
-  return name.split(" ").slice(0, 2).map((z) => z.charAt(0).toUpperCase()).join("")
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((z) => z.charAt(0).toUpperCase())
+    .join("");
 }
 
-export const capitlize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+export const capitlize = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 export type CommandSortResult = {
-  enabled: string[],
-  disabled: string[]
-}
+  enabled: string[];
+  disabled: string[];
+};
 
-export function sortCommandsByStatus(commands: Record<string, ECommand[]>): CommandSortResult {
+export function sortCommandsByStatus(
+  commands: Record<string, ECommand[]>
+): CommandSortResult {
   const result: CommandSortResult = {
     enabled: [],
-    disabled: []
+    disabled: [],
   };
 
   for (const category in commands) {
@@ -77,3 +84,17 @@ export function sortCommandsByStatus(commands: Record<string, ECommand[]>): Comm
 
   return result;
 }
+
+export const createId = (length: number = 40) => {
+  let str = "";
+  let chars =
+    "1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm---";
+  for (let i = 0; i < length; i++) {
+    str += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return str;
+};
+
+export function limitSentence(str: string, length: number = 25) {
+  return str.length > length ? str.slice(0,length) + "..." : str
+} 

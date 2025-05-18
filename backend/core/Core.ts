@@ -18,6 +18,7 @@ import { err, info, success } from "../utils/logger";
 import { api } from "../api";
 import { env } from "@/env";
 import { hostname } from "os";
+import ws from "../ws";
 
 export type CoreClientOptions = {
   clientId: string;
@@ -56,6 +57,8 @@ export default class CoreBot extends Client {
       },
       (a) => info(`API listening on  ${a.hostname}:${env.API_PORT}`)
     );
+
+    ws();
   }
 
   public register() {
@@ -80,10 +83,9 @@ export default class CoreBot extends Client {
       )?.default as Command;
       if (!data.name) return;
 
-
       this.commands.set(data.name, {
         ...data,
-        category: filePwd.split("/")[0].toLowerCase()
+        category: filePwd.split("/")[0].toLowerCase(),
       });
       commandList.push(data);
     }
@@ -97,7 +99,8 @@ export default class CoreBot extends Client {
         })
         .then((data) => {
           success(
-            `Registered ${(data as unknown as Array<any>).length || 0
+            `Registered ${
+              (data as unknown as Array<any>).length || 0
             } commands globally.`
           );
         })
@@ -115,7 +118,8 @@ export default class CoreBot extends Client {
         )
         .then((data) => {
           success(
-            `Registered ${(data as unknown as Array<any>).length || 0
+            `Registered ${
+              (data as unknown as Array<any>).length || 0
             } commands in: ${env.GUILD_ID}`
           );
         })

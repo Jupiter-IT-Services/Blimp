@@ -15,14 +15,15 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: z.string(),
     API_PORT: z.string(),
     GUILD_ID: z.string(),
+    WS_PORT: z.string(),
   },
   client: {
     NEXT_PUBLIC_URL: z.string().url(),
     NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string(),
     NEXT_PUBLIC_API_URL: z.string(),
+    NEXT_PUBLIC_WS_URL: z.string(),
   },
   runtimeEnv: {
-    // NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
@@ -37,5 +38,7 @@ export const env = createEnv({
     API_PORT: process.env.API_PORT,
     GUILD_ID: process.env.GUILD_ID,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    WS_PORT: process.env.WS_PORT,
+    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
   },
 });
