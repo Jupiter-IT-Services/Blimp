@@ -7,7 +7,6 @@ export default {
   usage: ["/ping"],
   type: ApplicationCommandType.ChatInput,
   run: ({ ctx, client, args }) => {
-
     ctx.reply({
       content: `Pong! 🏓 *${client.ws.ping}ms*`,
     });

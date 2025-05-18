@@ -46,13 +46,13 @@ export default {
             .remove(role)
             .then(() => {
               interaction.reply({
-                ephemeral: true,
+                flags: ["Ephemeral"],
                 content: `${config.emojis.tick} <@&${role.id}> has been removed from you.`,
               });
             })
             .catch(() => {
               interaction.reply({
-                ephemeral: true,
+                flags: ["Ephemeral"],
                 content: `${config.emojis.cross} Failed to remove <@&${role.id}> from you.`,
               });
             });
@@ -61,13 +61,13 @@ export default {
             .add(role)
             .then(() => {
               interaction.reply({
-                ephemeral: true,
+                flags: ["Ephemeral"],
                 content: `${config.emojis.tick} You have been given <@&${role.id}>`,
               });
             })
             .catch(() => {
               interaction.reply({
-                ephemeral: true,
+                flags: ["Ephemeral"],
                 content: `${config.emojis.tick} Failed to give you <@&${role.id}>`,
               });
             });
@@ -97,7 +97,7 @@ export default {
         await disabledCommand(command.name.toLowerCase(), interaction.guild.id)
       ) {
         return interaction.reply({
-          ephemeral: true,
+          flags: ["Ephemeral"],
           content: `${config.emojis.cross} This command is disabled.`,
         });
       }
@@ -107,7 +107,7 @@ export default {
         !interaction.member.permissions.has("Administrator")
       ) {
         return interaction.reply({
-          ephemeral: true,
+          flags: ["Ephemeral"],
           content: `${config.emojis.admin} You are missing the required permissions to use this command.`,
         });
       }
