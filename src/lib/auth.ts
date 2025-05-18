@@ -3,7 +3,6 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
 import { account, session, user, verification } from "@/lib/db/schema";
 import { bearer } from "better-auth/plugins";
-// import { createClient } from "redis";
 import { env } from "@/env";
 import { nextCookies } from "better-auth/next-js";
 import { DiscordProfile } from "./types";
@@ -110,3 +109,5 @@ export const auth = betterAuth({
     nextCookies(),
   ],
 });
+
+

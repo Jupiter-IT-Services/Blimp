@@ -21,7 +21,7 @@ export type GuildConfigInsert = typeof guildConfig.$inferInsert;
 export const reactionRole = pgTable("reaction_role", {
   id: text("id").primaryKey(), // guild owner id,
   uniqueId: text("unique_id").notNull().$defaultFn(() => createId()),
-  message: text("message").notNull(),
+  message: text("message").notNull(), // message payload JSON str
   reactions: text("reactions").notNull().array(), // Array of json stringifies, { roleId: string, emoji: string; label: string; style: string}
   messageId: text("message_id"), // links to existing message if there is one
   channelId: text("channel_id"),
@@ -42,6 +42,9 @@ export const user = pgTable("user", {
   guilds: text("guilds").notNull(),
 });
 
+export type User = typeof user.$inferSelect;
+export type UserInsert = typeof user.$inferInsert;
+
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -54,6 +57,9 @@ export const session = pgTable("session", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+export type Session = typeof session.$inferSelect;
+export type SessionInsert = typeof session.$inferInsert;
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),

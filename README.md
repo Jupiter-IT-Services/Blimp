@@ -6,6 +6,7 @@ _todo_:
 - premium?
 - modules:
   - Auto mod
+    - Auto slowmode based on chat acitivty, user sets levels "hgih", "mid" etc, based on messages per minute/second then set slowmode amount
   - Tags
   - Starboard
   - Leveling
