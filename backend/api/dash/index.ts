@@ -1,5 +1,6 @@
 import Elysia from "elysia";
 import { app } from "../..";
+import { stringify } from "flatted";
 import { z, ZodError } from "zod";
 import { db } from "@/lib/db";
 import { guildConfig, reactionRole } from "@/lib/db/schema";
@@ -50,7 +51,7 @@ export const dash = new Elysia({
         const id = data.ids[i];
         const guild = app.guilds.cache.find((f) => f.id === id);
         if (guild) {
-          r.push(guild.id);
+          r.push(guild);
         }
       }
 

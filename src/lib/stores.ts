@@ -7,7 +7,15 @@ export const useGuildStore = create<{
   setGuild: (guild: Guild | null) => void;
 }>()((set) => ({
   guild: null,
-  setGuild: (guild: Guild | null) => set(() => ({ guild: guild })),
+  setGuild: (guild: Guild | null) => set(() => ({ guild })),
+}));
+
+export const useAvailableGuildStore = create<{
+  guilds: Guild[] | null;
+  setGuilds: (guilds: Guild[] | null) => void;
+}>()((set) => ({
+  guilds: [],
+  setGuilds: (guilds: Guild[] | null) => set(() => ({ guilds })),
 }));
 
 export const useUserStore = create<{

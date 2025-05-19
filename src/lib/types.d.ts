@@ -1,3 +1,5 @@
+import { ButtonStyle } from "discord.js";
+
 export interface DiscordProfile extends Record<string, any> {
   /** the user's id (i.e. the numerical snowflake) */
   id: string;
@@ -69,3 +71,13 @@ export interface DiscordProfile extends Record<string, any> {
   /** undocumented field; the CDN URL of their profile picture */
   image_url: string;
 }
+
+
+export type ReactionRoleInput = {
+  label: string;
+  roleId: string;
+  style: number;
+  emoji?: string
+  tempId?: string;
+}
+

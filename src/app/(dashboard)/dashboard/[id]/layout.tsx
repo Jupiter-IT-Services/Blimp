@@ -33,6 +33,7 @@ export default function GuildLayout({
       }>(`${env.NEXT_PUBLIC_API_URL}/dash/guild/${id}`),
   });
 
+  
   React.useEffect(() => {
     if (!storedGuild) {
       mutateAsync()

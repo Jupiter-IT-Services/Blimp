@@ -22,7 +22,7 @@ import {
 import { env } from "@/env";
 import { useGuildStore, useWebsocket } from "@/lib/stores";
 import { betterFetch } from "@better-fetch/fetch";
-import {  useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Guild } from "discord.js";
 import { useEffect, useState } from "react";
 import { useSpinDelay } from "spin-delay";
@@ -31,6 +31,7 @@ import { sortCommandsByStatus } from "@/lib/utils";
 import { ECommand } from "@/backend/api/dash";
 import { toast } from "sonner";
 import { WSData, WSType } from "@/backend/ws";
+import { Input } from "@/components/ui/input";
 
 export type CommandsFetch = {
   ok: boolean;
@@ -39,7 +40,6 @@ export type CommandsFetch = {
 
 export default function Commands() {
   const guild = useGuildStore((s) => s.guild) as Guild;
-
 
   const { data, isError, isLoading, error } = useQuery({
     queryKey: ["getCommands"],
@@ -62,6 +62,7 @@ export default function Commands() {
   const [savedCommands, setSavedCommands] = useState(initialCommandData);
   const [updatedCommands, setUpdatedCommands] = useState(initialCommandData);
   const [hasChanges, setHasChanges] = useState(false);
+  const [search, setSearch] = useState("");
 
   const toggleCommandStatus = (category: string, commandName: string) => {
     const newCommands = JSON.parse(JSON.stringify(updatedCommands));
@@ -85,7 +86,6 @@ export default function Commands() {
     setHasChanges(false);
 
     const data = sortCommandsByStatus(updatedCommands);
-
 
     betterFetch<CommandsFetch>(
       `${env.NEXT_PUBLIC_API_URL}/dash/update-commands/${guild.id}`,
@@ -116,7 +116,12 @@ export default function Commands() {
     return <ErrorView error={error || new Error("Unable to find commands.")} />;
 
   return (
-    <div className="flex flex-row gap-3 flex-wrap mx-[2rem] my-[4.25rem] w-full">
+    <div className="flex flex-col gap-3 mx-[2rem] my-[4.25rem] w-full">
+      <Input
+        placeholder="Search Commands"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <Accordion
         className="w-full"
         type="multiple"
@@ -135,35 +140,37 @@ export default function Commands() {
                   {cat.toUpperCase()}
                 </AccordionTrigger>
                 <AccordionContent className="flex flex-row gap-2 my-[1rem]">
-                  {cmds.map((cmd, i) => {
-                    return (
-                      <TooltipProvider key={i}>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Card className="w-[12rem] h-[3rem] flex flex-row justify-between items-center p-[1rem]">
-                              <div className="flex flex-col gap-2">
-                                <h1 className="font-semibold text-lg">
-                                  /{cmd.name}
-                                </h1>
-                              </div>
-                              <div>
-                                <Switch
-                                  className="cursor-pointer"
-                                  checked={!cmd.disabled}
-                                  onClick={() => {
-                                    toggleCommandStatus(cat, cmd.name);
-                                  }}
-                                />
-                              </div>
-                            </Card>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{cmd.description}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    );
-                  })}
+                  {cmds
+                    .filter(
+                      (f) =>
+                        f.name.toLowerCase().includes(search.toLowerCase()) ||
+                        f.description
+                          .toLowerCase()
+                          .includes(search.toLowerCase())
+                    )
+                    .map((cmd, i) => {
+                      return (
+                        <Card className="w-full h-fit flex flex-row justify-between items-center p-[1rem]">
+                          <div className="flex flex-col items-start gap-1">
+                            <h1 className="font-semibold text-lg">
+                              /{cmd.name}
+                            </h1>
+                            <p className="opacity-60 text-xs">
+                              {cmd.description}
+                            </p>
+                          </div>
+                          <div>
+                            <Switch
+                              className="cursor-pointer"
+                              checked={!cmd.disabled}
+                              onClick={() => {
+                                toggleCommandStatus(cat, cmd.name);
+                              }}
+                            />
+                          </div>
+                        </Card>
+                      );
+                    })}
                 </AccordionContent>
               </AccordionItem>
             );

@@ -16,6 +16,7 @@ export const urlRegex =
   /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/;
 export const imageUrlRegex =
   /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?\.(?:jpg|jpeg|png|gif|bmp|webp|svg|tiff)$/i;
+export const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
 export function hasCapital(str: string) {
   return /[A-Z]/.test(str);

@@ -20,11 +20,14 @@ export type GuildConfigInsert = typeof guildConfig.$inferInsert;
 
 export const reactionRole = pgTable("reaction_role", {
   id: text("id").primaryKey(), // guild owner id,
-  uniqueId: text("unique_id").notNull().$defaultFn(() => createId()),
+  uniqueId: text("unique_id")
+    .notNull()
+    .$defaultFn(() => createId()),
   message: text("message").notNull(), // message payload JSON str
   reactions: text("reactions").notNull().array(), // Array of json stringifies, { roleId: string, emoji: string; label: string; style: string}
   messageId: text("message_id"), // links to existing message if there is one
   channelId: text("channel_id"),
+  name: text("name").notNull(),
 });
 
 export type ReactionRoleSelect = typeof reactionRole.$inferSelect;
