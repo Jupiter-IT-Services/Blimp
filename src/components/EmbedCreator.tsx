@@ -112,6 +112,7 @@ export default function EmbedCreator(props: EmbedCreatorProps) {
         <LabledInput
           className="w-full"
           label="title*"
+          valid={() => (title && title.length >= 1) as boolean}
           value={title}
           setValue={setTitle}
         />
@@ -156,7 +157,7 @@ export default function EmbedCreator(props: EmbedCreatorProps) {
           DESCRIPTION*
         </p>
         <Textarea
-          className={``}
+          className={`${description && description.length >= 1 ? "border-green-500/20" : "border-red-500/20"}`}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />

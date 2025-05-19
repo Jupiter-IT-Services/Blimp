@@ -53,7 +53,6 @@ export default function ReactionRolesNew() {
   const guild = useGuildStore((s) => s.guild) as unknown as Guild;
   const [roles, setRoles] = useState<GRole[]>([]);
   const [channels, setChannels] = useState<APIGuildChannel<ChannelType>[]>([]);
-  const [role, setRole] = useState<GRole>();
 
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
@@ -149,7 +148,7 @@ export default function ReactionRolesNew() {
           {data?.data?.data.map((rr, i) => (
             <div key={i} className="flex flex-row justify-between">
               <div className="w-full cursor-pointer flex-row justify-between px-[0.7rem] group bg-transparent hover:bg-gray-200/5 py-[0.7rem] rounded-md smooth_transition flex gap-2">
-                {limitSentence(rr.message, 15)}
+                {limitSentence(rr.name, 15)}
               </div>
               <div
                 onClick={() => {
@@ -196,6 +195,9 @@ export default function ReactionRolesNew() {
             <div className="flex flex-row gap-2 mb-[1rem]">
               <LabledInput
                 label="Name"
+                valid={() => {
+                  return (name && name.length >= 1) as boolean;
+                }}
                 placeHolder="Set a reaction role name."
                 className="w-[80%]"
                 value={name}
@@ -210,7 +212,9 @@ export default function ReactionRolesNew() {
                     setChannelId(v);
                   }}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger
+                    className={`w-full ${channelId ? "border-green-500/20" : "border-red-500/20"}`}
+                  >
                     {channelId
                       ? channels.find((f) => f.id === channelId)?.name
                       : "Select a channel."}
@@ -239,7 +243,7 @@ export default function ReactionRolesNew() {
               <TabsContent className="h-full" value="message">
                 <Textarea
                   value={message}
-                  className="min-h-[200px]"
+                  className={`min-h-[200px] ${message && message.length >= 1 ? "border-green-500/20" : "border-red-500/20"}`}
                   onChange={(e) => setMessage(e.target.value)}
                 />
               </TabsContent>
@@ -388,7 +392,81 @@ export default function ReactionRolesNew() {
               </Button>
             </div>
 
-            <Button variant={"red"} className="cursor-pointer">
+            <Button
+              onClick={() => {
+                if (!channelId) {
+                  toast.error("Please provide a channel");
+                  return;
+                }
+
+                if (!name) {
+                  toast.error("Please provide a reaction role name.");
+                  return;
+                }
+
+                if (
+                  roleButtons.filter(
+                    (f) =>
+                      !f.roleId ||
+                      f.roleId.length <= 0 ||
+                      !f.label ||
+                      f.label.length <= 0
+                  ).length > 0
+                ) {
+                  toast.error("Please provide atleast one role button.");
+                  return;
+                }
+
+                if (!message && !embed) {
+                  toast.error("A message or an embed is required.");
+                  return;
+                }
+
+                if (embed) {
+                  if (!embed.title || !embed.description) {
+                    toast.error("An embed title or description is required.");
+                    return;
+                  }
+                }
+
+                const r = roleButtons.map((r) => {
+                  delete r.tempId;
+                  return r;
+                });
+
+                console.log(embed);
+
+                betterFetch(
+                  `${env.NEXT_PUBLIC_API_URL}/modules/reaction-roles/${guild.id}`,
+                  {
+                    method: "POST",
+                    body: {
+                      guildId: guild.id,
+                      channelId: channelId,
+                      name: name,
+                      message: message,
+                      embed: embed,
+                      roles: r,
+                    },
+                    onRequest: () => {
+                      toast.info("Creating reaction...");
+                    },
+                    onError: (ctx) => {
+                      toast.error("Failed to create reaction.");
+                      console.log(ctx.error.message);
+                    },
+                    onSuccess: () => {
+                      toast.success("Reaction role created.");
+                      setTimeout(() => {
+                        window.location.href = window.location.href;
+                      }, 1500);
+                    },
+                  }
+                );
+              }}
+              variant={"red"}
+              className="cursor-pointer"
+            >
               Send Reaction Role
             </Button>
           </CardContent>
