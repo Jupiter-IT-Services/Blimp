@@ -91,21 +91,6 @@ export const auth = betterAuth({
     schema: { user, session, account, verification },
   }),
   plugins: [
-    // TOO BRING BACK 
-    // stripe({
-    //   stripeClient: stripeClient,
-    //   stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
-    //   createCustomerOnSignUp: true,
-    //   subscription: {
-    //     enabled: true,
-    //     plans: [
-    //       {
-    //         name: "Premium",
-    //         priceId: "prod_SK2PU51RThIHhB",
-    //       },
-    //     ],
-    //   },
-    // }),
     bearer(),
     nextCookies(),
   ],
