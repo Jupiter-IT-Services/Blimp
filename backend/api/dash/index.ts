@@ -46,15 +46,36 @@ export const dash = new Elysia({
   .post(`/guilds/in`, ({ body }) => {
     try {
       const data = guildsSchema.parse(body);
+      console.log("Received guild IDs:", data.ids);
+      
+      if (!Array.isArray(data.ids) || data.ids.length === 0) {
+        console.error("No valid guild IDs received");
+        return new Response(
+          JSON.stringify({
+            ok: false,
+            message: "No valid guild IDs provided",
+            data: []
+          }),
+          { status: 400 }
+        );
+      }
+      
       const r = [];
       for (let i = 0; i < data.ids.length; i++) {
         const id = data.ids[i];
+        if (!id || typeof id !== 'string') {
+          console.warn(`Invalid guild ID format: ${JSON.stringify(id)}`);
+          continue;
+        }
+        
         const guild = app.guilds.cache.find((f) => f.id === id);
+        console.log(`Checking guild ID ${id}: ${guild ? "Found" : "Not found"}`);
         if (guild) {
           r.push(guild);
         }
       }
 
+      console.log(`Found ${r.length} guilds out of ${data.ids.length} requested`);
       return new Response(
         JSON.stringify({
           ok: true,
@@ -65,15 +86,18 @@ export const dash = new Elysia({
         }
       );
     } catch (e) {
+      console.error("Error processing guild IDs request:", e);
       return new Response(
         JSON.stringify({
           ok: false,
           message: "Failed to check servers.",
+          error: e instanceof Error ? e.message : "Unknown error"
         }),
         {
           status: 400,
         }
       );
+    }
     }
   })
   .get(`/guild/:id/role/:roleId`, ({ params }) => {

@@ -15,9 +15,9 @@ import Stripe from "stripe";
 //   url: env.REDIS_URL,
 // });
 
-const stripeClient = new Stripe(env.STRIPE_PRIVATE_KEY, {
-  apiVersion: "2025-02-24.acacia",
-});
+// const stripeClient = new Stripe(env.STRIPE_PRIVATE_KEY, {
+//   apiVersion: "2025-02-24.acacia",
+// });
 
 // await redis.connect();
 
@@ -91,20 +91,20 @@ export const auth = betterAuth({
     schema: { user, session, account, verification },
   }),
   plugins: [
-    stripe({
-      stripeClient: stripeClient,
-      stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
-      createCustomerOnSignUp: true,
-      subscription: {
-        enabled: true,
-        plans: [
-          {
-            name: "Premium",
-            priceId: "prod_SK2PU51RThIHhB",
-          },
-        ],
-      },
-    }),
+    // stripe({
+    //   stripeClient: stripeClient,
+    //   stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+    //   createCustomerOnSignUp: true,
+    //   subscription: {
+    //     enabled: true,
+    //     plans: [
+    //       {
+    //         name: "Premium",
+    //         priceId: "prod_SK2PU51RThIHhB",
+    //       },
+    //     ],
+    //   },
+    // }),
     bearer(),
     nextCookies(),
   ],
