@@ -4,22 +4,24 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     // NODE_ENV: z.enum(["development", "test", "production"]),
-    RESEND_API_KEY: z.string(),
+    RESEND_API_KEY: z.string().optional(),
     BETTER_AUTH_SECRET: z.string(),
     BETTER_AUTH_URL: z.string().url(),
     DATABASE_URL: z.string(),
-    REDIS_URL: z.string(),
+    REDIS_URL: z.string().optional(),
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
-    STRIPE_PRIVATE_KEY: z.string(),
-    STRIPE_WEBHOOK_SECRET: z.string(),
+    // TODO: UNDO AFTER BRING BACK IMPLEMENTATION
+    STRIPE_PRIVATE_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
     API_PORT: z.string(),
     GUILD_ID: z.string(),
     WS_PORT: z.string(),
   },
   client: {
     NEXT_PUBLIC_URL: z.string().url(),
-    NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string(),
+    // TODO: UNDO AFTER BRING BACK IMPLEMENTATION
+    NEXT_PUBLIC_STRIPE_PUBLIC_KEY: z.string().optional(),
     NEXT_PUBLIC_API_URL: z.string(),
     NEXT_PUBLIC_WS_URL: z.string(),
   },

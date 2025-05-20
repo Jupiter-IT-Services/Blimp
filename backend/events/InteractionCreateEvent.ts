@@ -1,8 +1,9 @@
-import type {
-  ClientEvents,
-  CommandInteractionOptionResolver,
-  GuildMember,
-  Interaction,
+import {
+  resolveColor,
+  type ClientEvents,
+  type CommandInteractionOptionResolver,
+  type GuildMember,
+  type Interaction,
 } from "discord.js";
 import type { Event, ExtendedInteraction } from "../core/typings";
 import { app } from "..";
@@ -12,6 +13,7 @@ import config from "../config";
 import { reactionRole } from "@/lib/db/schema";
 import { db } from "@/lib/db";
 import { and, eq } from "drizzle-orm";
+import { defaultEmbeds, Embed } from "../core/Embed";
 
 export default {
   name: "interactionCreate",
@@ -98,7 +100,12 @@ export default {
       ) {
         return interaction.reply({
           flags: ["Ephemeral"],
-          content: `${config.emojis.cross} This command is disabled.`,
+          embeds: [
+            new Embed({
+              color: resolveColor(config.colors.info),
+              description: `${config.emojis.cross} This command is disabled.`,
+            }),
+          ],
         });
       }
 
@@ -108,7 +115,19 @@ export default {
       ) {
         return interaction.reply({
           flags: ["Ephemeral"],
-          content: `${config.emojis.admin} You are missing the required permissions to use this command.`,
+          embeds: [defaultEmbeds["missing-permissions"]()],
+        });
+      }
+
+      if (
+        command.defaultMemberPermissions &&
+        interaction.member.permissions.missing(command.defaultMemberPermissions)
+          .length > 0 &&
+        !interaction.member.permissions.has("Administrator")
+      ) {
+        return interaction.reply({
+          flags: ["Ephemeral"],
+          embeds: [defaultEmbeds["missing-permissions"]()],
         });
       }
 

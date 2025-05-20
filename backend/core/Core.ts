@@ -19,6 +19,8 @@ import { api } from "../api";
 import { env } from "@/env";
 import { hostname } from "os";
 import ws from "../ws";
+import Moderation from "../modules/management/moderation";
+import Logging from "../modules/management/logging";
 
 export type CoreClientOptions = {
   clientId: string;
@@ -27,6 +29,9 @@ export type CoreClientOptions = {
 export default class CoreBot extends Client {
   commands: Map<string, Command> = new Map();
   opts: Partial<CoreClientOptions> = {};
+
+  moderation = new Moderation();
+  logging = new Logging();
   constructor() {
     super({
       intents: Object.keys(GatewayIntentBits).filter((f) =>

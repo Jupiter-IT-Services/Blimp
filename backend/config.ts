@@ -1,12 +1,18 @@
 export default {
   colors: {
     default: "#6c1228",
+    error: "#fb2c36",
+    success: "#00c951",
+    info: "#2b7fff",
+    warn: "#ff8904",
   },
   emojis: {
-    cross: "<:tickNo:1373289436275802184>",
-    tick: "<:tickYes:1373289440625037374>",
-    admin: "<:Administrator:1373289679541108811>",
-    mod: "<:SrModerator:1373289654761029832>",
-    owner: "<:ServerManager:1373289643885330513>",
+    cross: "<:20943crossmark:1374441878942122044>",
+    tick: "<:37667checkmark:1374441901830176838>",
+    admin: "<:60849staff:1374441954770944061>",
+    mod: "<:60849staff:1374441954770944061>",
+    dollar: "<:37667donator:1374441909862269128>",
+    proSub: "<:1466vip:1374441835509841981>",
+    text: "<:5726artist:1374441853360930866>",
   },
 } as const;
