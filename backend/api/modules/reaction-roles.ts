@@ -2,9 +2,8 @@ import Elysia from "elysia";
 import { app } from "../..";
 import { z, ZodError } from "zod";
 import { db } from "@/lib/db";
-import { guildConfig, reactionRole, ReactionRoleInsert } from "@/lib/db/schema";
+import { reactionRole } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
-import { err, info } from "@/backend/utils/logger";
 import {
   ActionRowBuilder,
   APIEmbed,
@@ -16,8 +15,9 @@ import {
   resolveColor,
   TextChannel,
 } from "discord.js";
-import { createId, imageUrlRegex, urlRegex } from "@/lib/utils";
+import { createId, urlRegex } from "@/lib/utils";
 import config from "@/backend/config";
+import { getGuildConfig } from "@/backend/utils/misc";
 
 export const reactionRolesModule = new Elysia({
   prefix: "/reaction-roles",
@@ -28,7 +28,7 @@ export const reactionRolesModule = new Elysia({
       .from(reactionRole)
       .where(
         and(
-          eq(reactionRole.id, params.id),
+          eq(reactionRole.guildId, params.id),
           eq(reactionRole.uniqueId, params.uid)
         )
       );
@@ -58,7 +58,7 @@ export const reactionRolesModule = new Elysia({
       .delete(reactionRole)
       .where(
         and(
-          eq(reactionRole.id, params.id),
+          eq(reactionRole.guildId, params.id),
           eq(reactionRole.uniqueId, params.uid)
         )
       )
@@ -128,7 +128,7 @@ export const reactionRolesModule = new Elysia({
             })
             .array(),
         })
-        .nullable(),
+        .optional(),
       roles: z
         .object({
           label: z.string(),
@@ -193,7 +193,8 @@ export const reactionRolesModule = new Elysia({
         .insert(reactionRole)
         .values({
           channelId: data.channelId,
-          id: data.guildId,
+          id: createId(),
+          guildId: data.guildId,
           uniqueId: uId,
           message: JSON.stringify({
             content: data.message || undefined,
@@ -239,4 +240,69 @@ export const reactionRolesModule = new Elysia({
         }
       );
     }
+  })
+  .get(`/:id/enabled`, async ({ params }) => {
+    const guildConfig = await getGuildConfig(params.id);
+    if (!guildConfig)
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          message: "Guild config not found.",
+        }),
+        {
+          status: 200,
+        }
+      );
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: guildConfig.reactionRoles,
+      }),
+      {
+        status: 200,
+      }
+    );
+  })
+  .get(`/:id`, async ({ params }) => {
+    const guildConfig = await getGuildConfig(params.id);
+    if (!guildConfig)
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          message: "Guild config not found.",
+        }),
+        {
+          status: 200,
+        }
+      );
+
+    if (!guildConfig.reactionRoles) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          data: [],
+          disabled: true,
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+
+    const reactionRoles = await db
+      .select()
+      .from(reactionRole)
+      .where(eq(reactionRole.guildId, params.id));
+
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        data: reactionRole ? reactionRoles : [],
+        disabled: false,
+      }),
+      {
+        status: 200,
+      }
+    );
   });

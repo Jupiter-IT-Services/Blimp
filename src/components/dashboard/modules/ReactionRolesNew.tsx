@@ -70,7 +70,7 @@ export default function ReactionRolesNew() {
         ok: boolean;
         data: ReactionRoleSelect[];
         disabled: boolean;
-      }>(`${env.NEXT_PUBLIC_API_URL}/dash/reaction-roles/${guild.id}`),
+      }>(`${env.NEXT_PUBLIC_API_URL}/modules/reaction-roles/${guild.id}`),
   });
 
   const { data: rawRoles } = useQuery({
@@ -153,7 +153,7 @@ export default function ReactionRolesNew() {
               <div
                 onClick={() => {
                   betterFetch(
-                    `${env.NEXT_PUBLIC_API_URL}/modules/reaction-roles/${rr.id}/${rr.uniqueId}`,
+                    `${env.NEXT_PUBLIC_API_URL}/modules/reaction-roles/${rr.guildId}/${rr.uniqueId}`,
                     {
                       method: "DELETE",
                       onRequest: () => {

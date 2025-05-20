@@ -139,7 +139,7 @@ export default function Commands() {
                 <AccordionTrigger className="text-sm font-bold">
                   {cat.toUpperCase()}
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-row gap-2 my-[1rem]">
+                <AccordionContent className="flex flex-col gap-2 my-[1rem]">
                   {cmds
                     .filter(
                       (f) =>
@@ -152,7 +152,7 @@ export default function Commands() {
                       return (
                         <Card className="w-full h-fit flex flex-row justify-between items-center p-[1rem]">
                           <div className="flex flex-col items-start gap-1">
-                            <h1 className="font-semibold text-lg">
+                            <h1 className="font-semibold text-md">
                               /{cmd.name}
                             </h1>
                             <p className="opacity-60 text-xs">

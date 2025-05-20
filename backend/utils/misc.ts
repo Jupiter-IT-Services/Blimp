@@ -49,4 +49,6 @@ export async function disabledCommand(name: string, guildId: string) {
   return config.disabledCommands.includes(name.toLowerCase());
 }
 
-
+export function getCommand(name: string) {
+  return app.commands.get(name.toLowerCase());
+}
